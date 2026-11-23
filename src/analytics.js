@@ -11,7 +11,7 @@ const MIXPANEL_TOKEN = "e08ec9f4d85b65e282a035a2f549d97b";
 const STATSIG_CLIENT_KEY = "client-tcpB4D3YZqR7LbmBeU61IEpl74SBXsEFojW4gQBOIFX";
 // Amplitude Experiment (feature flags) uses a *deployment key*, which is
 // different from the analytics key above. Paste it here to turn flags on.
-const AMPLITUDE_EXPERIMENT_DEPLOYMENT_KEY = "";
+const AMPLITUDE_EXPERIMENT_DEPLOYMENT_KEY = "client-IBlYsmJXQuFQW3wo1nW6PWlN1oM4Z6IV";
 
 // Stable anonymous id so Statsig/Mixpanel can recognise a returning browser.
 function getAnonId() {
@@ -132,6 +132,13 @@ window.statusAnalytics = { track, flag, arrival };
 track("status_page_viewed", {
   route_context: arrival.route_context,
   referrer_domain: arrival.referrer_domain,
+});
+
+// Feature flag "flag1": when on, reveal the beta banner (see index.html).
+flag("flag1", false).then((on) => {
+  console.info("[flags] flag1 =", on);
+  document.body.classList.toggle("flag1-on", !!on);
+  track("flag_evaluated", { flag_key: "flag1", flag_value: !!on });
 });
 
 // Replay anything index.js fired before this bundle finished loading.

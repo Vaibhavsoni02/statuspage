@@ -329,3 +329,17 @@ footer a {
     width: 100%;
   }
 }
+
+.flag1Banner {
+  display: none;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #e8f0fe;
+  color: #1a3d8f;
+  font-size: 14px;
+  text-align: center;
+}
+.flag1-on .flag1Banner {
+  display: block;
+}
