@@ -35,6 +35,7 @@ do
   for i in 1 2 3 4; 
   do
     response=$(curl --write-out '%{http_code}' --silent --max-time 20 -A 'Mozilla/5.0' --output /dev/null $url)
+    echo "    attempt $i: HTTP $response"
     if [ "$response" -ge 200 ] && [ "$response" -lt 400 ]; then
       result="success"
     else
