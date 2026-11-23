@@ -75,7 +75,8 @@ function init() {
   // Statsig: auto-capture + session replay
   statsigClient = new StatsigClient(
     STATSIG_CLIENT_KEY,
-    { userID: anonId },
+    // stableID is the default ID type for new Statsig gates.
+    { userID: anonId, customIDs: { stableID: anonId } },
     {
       plugins: [new StatsigSessionReplayPlugin(), new StatsigAutoCapturePlugin()],
     }
