@@ -36,7 +36,10 @@ do
   do
     response=$(curl --write-out '%{http_code}' --silent --max-time 20 -A 'Mozilla/5.0' --output /dev/null $url)
     echo "    attempt $i: HTTP $response"
-    if [ "$response" -ge 200 ] && [ "$response" -lt 400 ]; then
+    # 2xx/3xx = up. 403/405/429 mean the server answered but is blocking or
+    # rate-limiting bot traffic from GitHub's IPs, so treat those as up too.
+    # 5xx, 404 and timeouts (000) still count as failures.
+    if { [ "$response" -ge 200 ] && [ "$response" -lt 400 ]; } || [ "$response" -eq 403 ] || [ "$response" -eq 405 ] || [ "$response" -eq 429 ]; then
       result="success"
     else
       result="failed"
