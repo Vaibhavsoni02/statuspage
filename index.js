@@ -236,6 +236,61 @@ function hideTooltip() {
   }, 1000);
 }
 
+// Analytics: safe no-op if the bundle is blocked; queues until it loads.
+function trackEvent(name, props) {
+  if (window.statusAnalytics) {
+    window.statusAnalytics.track(name, props);
+  } else {
+    (window.__spQueue = window.__spQueue || []).push([name, props]);
+  }
+}
+
+const pageLoadedAt = Date.now();
+let componentsOpened = 0;
+let clarityReported = false;
+
+function instrumentComponents() {
+  const cards = document.querySelectorAll("#reports .statusContainer");
+  const statuses = Array.from(cards).map(
+    (c) => c.querySelector(".statusHeadline").className.split(" ")[0]
+  );
+  const overall = statuses.includes("failure")
+    ? "failure"
+    : statuses.includes("partial")
+    ? "partial"
+    : statuses.every((s) => s == "nodata")
+    ? "nodata"
+    : "success";
+
+  trackEvent("status_current_viewed", {
+    current_status: getStatusText(overall),
+    components_count: cards.length,
+    is_search_filter_applied: false,
+  });
+
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const status = card.querySelector(".statusHeadline").className.split(" ")[0];
+      componentsOpened++;
+      trackEvent("component_impact_opened", {
+        component_name: card.querySelector(".statusTitle").innerText.trim(),
+        component_status: getStatusText(status),
+        impact_severity:
+          status == "failure" ? "major" : status == "partial" ? "partial" : "none",
+      });
+      if (!clarityReported) {
+        clarityReported = true;
+        trackEvent("clarity_success_viewed", {
+          success_type: "component_opened_after_status",
+          number_of_incidents_viewed: 0,
+          number_of_components_viewed: componentsOpened,
+          seconds_since_load: Math.round((Date.now() - pageLoadedAt) / 1000),
+        });
+      }
+    });
+  });
+}
+
 async function genAllReports() {
   const response = await fetch("urls.cfg");
   const configText = await response.text();
@@ -249,4 +304,5 @@ async function genAllReports() {
 
     await genReportLog(document.getElementById("reports"), key, url);
   }
+  instrumentComponents();
 }
