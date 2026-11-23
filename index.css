@@ -330,16 +330,53 @@ footer a {
   }
 }
 
-.flag1Banner {
-  display: none;
-  margin: 0 0 16px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: #e8f0fe;
-  color: #1a3d8f;
-  font-size: 14px;
-  text-align: center;
+/* Dark theme variant, served by the Amplitude flag "flag1" (value: dark). */
+html.theme-dark body {
+  background-color: #0f1115;
+  color: #d6d8dd;
 }
-.flag1-on .flag1Banner {
-  display: block;
+html.theme-dark h1,
+html.theme-dark h2,
+html.theme-dark h3,
+html.theme-dark h4,
+html.theme-dark h5,
+html.theme-dark h6 {
+  color: #eceef2;
+}
+html.theme-dark a {
+  color: #7db4ee;
+}
+html.theme-dark .pageContainer {
+  background-color: #181b21;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.5);
+}
+html.theme-dark .headline span {
+  background-color: #252a33;
+  color: #eceef2;
+}
+html.theme-dark .statusContainer {
+  border-color: #2a2f38;
+}
+html.theme-dark .statusUptime {
+  color: #9aa0ab;
+}
+html.theme-dark .nodata {
+  background-color: #262a32;
+  color: #6b7280;
+}
+html.theme-dark footer {
+  color: #7d838f;
+}
+html.theme-dark .tooltip {
+  background-color: #252a33;
+  color: #d6d8dd;
+}
+html.theme-dark .tooltip .tooltipArrow {
+  border-bottom-color: #252a33;
+}
+html.theme-dark .tooltip .tooltipDescription {
+  color: #eceef2;
+}
+html.theme-dark .tooltip hr {
+  border-top-color: #3a404b;
 }

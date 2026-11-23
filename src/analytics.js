@@ -134,11 +134,16 @@ track("status_page_viewed", {
   referrer_domain: arrival.referrer_domain,
 });
 
-// Feature flag "flag1": when on, reveal the beta banner (see index.html).
-flag("flag1", false).then((on) => {
-  console.info("[flags] flag1 =", on);
-  document.body.classList.toggle("flag1-on", !!on);
-  track("flag_evaluated", { flag_key: "flag1", flag_value: !!on });
+// Feature flag "flag1" picks the theme variant: "light" or "dark".
+// Anything else (off, missing, error) falls back to light.
+flag("flag1", "light").then((value) => {
+  const variant = value === "dark" ? "dark" : "light";
+  console.info("[flags] flag1 variant =", variant, "(raw:", value, ")");
+  document.documentElement.classList.toggle("theme-dark", variant === "dark");
+  try {
+    localStorage.setItem("sp_theme", variant);
+  } catch (e) {}
+  track("flag_evaluated", { flag_key: "flag1", flag_value: variant });
 });
 
 // Replay anything index.js fired before this bundle finished loading.

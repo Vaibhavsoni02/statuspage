@@ -2,6 +2,13 @@
   <head>
     <title>Services Status</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      // Apply the last-known theme variant instantly to avoid a light flash.
+      try {
+        if (localStorage.getItem("sp_theme") === "dark")
+          document.documentElement.classList.add("theme-dark");
+      } catch (e) {}
+    </script>
     <link rel="stylesheet" href="index.css" />
     <script src="index.js"></script>
     <script src="analytics.bundle.js" defer></script>
@@ -10,9 +17,6 @@
     <div class="pageContainer">
       <div class="headline">
         <span> Services Status </span>
-      </div>
-      <div id="flag1Banner" class="flag1Banner">
-        Feature flag <b>flag1</b> is ON for you.
       </div>
       <div id="reports" class="reportContainer"></div>
       <div id="tooltip" class="tooltip" style="opacity: 0">
