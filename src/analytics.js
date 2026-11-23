@@ -107,7 +107,8 @@ function stringify(obj) {
 
 // Feature flags. Amplitude Experiment first (once keyed), Statsig gate as
 // a fallback, otherwise the supplied default.
-async function flag(key, defaultValue = false) {
+// gateValue: what to return when the Statsig fallback gate passes (default true).
+async function flag(key, defaultValue = false, gateValue = true) {
   try {
     await ready;
     const exp = amplitude.experiment?.();
@@ -119,7 +120,9 @@ async function flag(key, defaultValue = false) {
       }
       if (v && v.value === "off") return false;
     }
-    if (statsigClient) return statsigClient.checkGate(key);
+    if (statsigClient) {
+      return statsigClient.checkGate(key) ? gateValue : defaultValue;
+    }
   } catch (e) {
     console.warn("flag lookup failed", key, e);
   }
@@ -136,7 +139,8 @@ track("status_page_viewed", {
 
 // Feature flag "flag1" picks the theme variant: "light" or "dark".
 // Anything else (off, missing, error) falls back to light.
-flag("flag1", "light").then((value) => {
+// If Amplitude returns nothing, the Statsig gate "flag1" decides: pass = dark.
+flag("flag1", "light", "dark").then((value) => {
   const variant = value === "dark" ? "dark" : "light";
   console.info("[flags] flag1 variant =", variant, "(raw:", value, ")");
   document.documentElement.classList.toggle("theme-dark", variant === "dark");
